@@ -216,29 +216,55 @@ elif cultivo == "Papa":
 
 elif cultivo == "Plátano (Triangular)":
     st.header("🍌 Sistema de Siembra: Plátano en Triangular")
-    st.write(
-        "En el arreglo triangular (tres bolillo), la distancia entre surcos se ajusta geométricamente."
+
+    unidad_area = st.radio(
+        "¿En qué unidad deseas ingresar la superficie del terreno?",
+        ["Hectáreas (Has)", "Metros Cuadrados (m²)"],
+        key="plat_u_area",
     )
 
-    area_largo = st.number_input(
-        "Largo del lote (metros)", min_value=1.0, value=100.0, key="plat_largo"
-    )
-    area_ancho = st.number_input(
-        "Ancho del lote (metros)", min_value=1.0, value=50.0, key="plat_ancho"
-    )
-    distancia = st.number_input(
-        "Distancia entre plantas (metros)", min_value=0.1, value=3.0, key="plat_d"
+    if unidad_area == "Hectáreas (Has)":
+        superficie_input = st.number_input(
+            "Superficie en Hectáreas (Has)",
+            min_value=0.01,
+            value=28.7,
+            key="plat_has",
+        )
+        superficie_m2 = superficie_input * 10000.0
+    else:
+        superficie_m2 = st.number_input(
+            "Superficie en Metros Cuadrados (m²)",
+            min_value=1.0,
+            value=287000.0,
+            key="plat_m2",
+        )
+
+    distancia_platano = st.number_input(
+        "Distancia de siembra (d en metros)",
+        min_value=0.1,
+        value=2.5,
+        key="plat_d",
     )
 
-    if st.button("Calcular Triangular"):
-        area_total = area_largo * area_ancho
-        factor_triangular = (math.sqrt(3) / 2) * (distancia**2)
-        plantas_totales = area_total / factor_triangular
+    if st.button("Calcular Plátano Triangular"):
+        d_cuadrado = distancia_platano**2
+        # Fórmula exacta del SENA: NP = (S / d^2) * 1,154
+        plantas_totales = (superficie_m2 / d_cuadrado) * 1.154
 
-        st.success("¡Cálculo realizado!")
-        st.write(f"- **Área total:** {area_total:,.2f} m²")
+        st.success("¡Cálculo realizado con éxito!")
+        if unidad_area == "Hectáreas (Has)":
+            st.write(
+                f"- **Conversión de Área:** {superficie_input} Has × 10,000 = **{superficie_m2:,.0f} m²**"
+            )
+        st.write(f"- **Superficie total (S):** {superficie_m2:,.0f} m²")
         st.write(
-            f"- **Plantas totales (Triangular):** {int(plantas_totales):,} plantas"
+            f"- **Cálculo ($d^2$):** ({distancia_platano})² = {d_cuadrado:.2f}"
+        )
+        st.write(
+            f"- **Fórmula SENA:** ({superficie_m2:,.0f} ÷ {d_cuadrado}) × 1.154"
+        )
+        st.write(
+            f"- **Densidad Poblacional Total:** **{round(plantas_totales):,} plantas de plátano**"
         )
 
 elif cultivo == "Quincunce (Frutales)":
