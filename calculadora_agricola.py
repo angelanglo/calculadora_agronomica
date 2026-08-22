@@ -18,30 +18,62 @@ cultivo = st.sidebar.selectbox(
 if cultivo == "Tomate":
     st.header("🍅 Cálculo para Cultivo de Tomate")
 
-    # Opción de unidades para las distancias entre plantas/surcos
-    unidad_medida = st.radio(
-        "¿En qué unidad deseas ingresar las distancias de plantación?",
-        ["Metros (m)", "Centímetros (cm)"],
+    # 1. Opción de ingresar por Área Total o por Dimensiones Directas
+    tipo_entrada = st.radio(
+        "¿Cómo conoces las medidas de tu terreno?",
+        ["Largo y Ancho directo", "Área Total y uno de los lados"],
     )
+
+    if tipo_entrada == "Área Total y uno de los lados":
+        area_total = st.number_input(
+            "Área total del terreno (m²)", min_value=1.0, value=22000.0
+        )
+        lado_conocido = st.number_input(
+            "Valor de uno de los lados (Ancho o Largo en metros)",
+            min_value=1.0,
+            value=220.0,
+        )
+
+        # Despejamos el otro lado automáticamente (Área / Lado)
+        lado_calculado = area_total / lado_conocido
+        st.info(
+            f"💡 Según tu área de {area_total} m², el otro lado calculado es de: **{lado_calculado:.2f} metros**"
+        )
+
+        # Preguntamos si el lado conocido es el Ancho o el Largo
+        cual_es = st.selectbox(
+            "El valor que ingresaste arriba corresponde a:", ["Ancho", "Largo"]
+        )
+        if cual_es == "Ancho":
+            area_ancho = lado_conocido
+            area_largo = lado_calculado
+        else:
+            area_largo = lado_conocido
+            area_ancho = lado_calculado
+    else:
+        area_largo = st.number_input(
+            "Largo del terreno (metros)", min_value=1.0, value=100.0
+        )
+        area_ancho = st.number_input(
+            "Ancho del terreno (metros)", min_value=1.0, value=220.0
+        )
+        area_total = area_largo * area_ancho
 
     st.write("---")
-    st.subheader("Dimensiones del Terreno")
-    area_largo = st.number_input(
-        "Largo del terreno (metros)", min_value=1.0, value=50.0
-    )
-    area_ancho = st.number_input(
-        "Ancho del terreno (metros)", min_value=1.0, value=20.0
+    st.subheader("Distancias de Siembra")
+    unidad_medida = st.radio(
+        "¿En qué unidad deseas ingresar las distancias?",
+        ["Centímetros (cm)", "Metros (m)"],
     )
 
-    st.subheader("Distancias de Siembra")
     d_surcos_input = st.number_input(
-        "Distancia entre surcos", min_value=0.1, value=1.5
+        "Distancia entre surcos (D/S)", min_value=0.1, value=96.0
     )
     d_plantas_input = st.number_input(
-        "Distancia entre plantas en el surco", min_value=0.1, value=40.0
+        "Distancia entre plantas en el surco (D/P)", min_value=0.1, value=40.0
     )
 
-    # Conversión automática si el usuario eligió centímetros
+    # Conversión automática de cm a metros si aplica
     if unidad_medida == "Centímetros (cm)":
         distancia_entre_surcos = d_surcos_input / 100.0
         distancia_entre_plantas = d_plantas_input / 100.0
@@ -49,44 +81,32 @@ if cultivo == "Tomate":
         distancia_entre_surcos = d_surcos_input
         distancia_entre_plantas = d_plantas_input
 
-    # Sección de cálculo inverso / estimación de dimensiones si se requiere
     st.write("---")
-    st.subheader("Herramienta de Dimensiones (Opcional)")
-    modo_calculo = st.checkbox(
-        "¿Deseas calcular el área estimando a partir de número de surcos deseados?"
-    )
-
-    if modo_calculo:
-        surcos_deseados = st.number_input(
-            "Número de surcos que deseas sembrar", min_value=1, value=10
-        )
-        ancho_calculado = surcos_deseados * distancia_entre_surcos
-        st.info(
-            f"💡 Para tener {surcos_deseados} surcos, necesitarías un ancho de terreno de aproximadamente **{ancho_calculado:.2f} metros**."
-        )
-
-    if st.button("Calcular Tomate"):
-        # Cálculos principales
-        area_total = area_largo * area_ancho
+    if st.button("Calcular Densidad Poblacional"):
+        # Fórmulas idénticas a tu guía del SENA
         numero_de_surcos = area_ancho / distancia_entre_surcos
         plantas_por_surco = area_largo / distancia_entre_plantas
-        plantas_totales = numero_de_surcos * plantas_por_surco
+
+        # Usamos surcos completos para el cálculo final o exactos según prefieras
+        surcos_completos = math.floor(numero_de_surcos)
+        plantas_totales = surcos_completos * plantas_por_surco
 
         st.success("¡Cálculo realizado con éxito!")
 
-        # Mostrar resultados detallados
-        st.write(f"- **Área total del terreno:** {area_total:.2f} m²")
-        st.write(f"- **Número de surcos:** {math.ceil(numero_de_surcos)}")
-        st.write(f"- **Plantas por surco:** {int(plantas_por_surco)} plantas")
+        st.write(f"- **Área total del terreno:** {area_total:,.2f} m²")
         st.write(
-            f"- **Plantas totales estimadas:** {int(plantas_totales)} plantas"
+            f"- **1. Número de surcos:** {area_ancho} m ÷ {distancia_entre_surcos} m = **{numero_de_surcos:.2f}** $\\rightarrow$ **{surcos_completos} surcos** (completos)"
+        )
+        st.write(
+            f"- **2. Plantas por surco:** {area_largo} m ÷ {distancia_entre_plantas} m = **{int(plantas_por_surco)} plantas por surco**"
+        )
+        st.write(
+            f"- **3. Plantas totales (Densidad Poblacional):** {surcos_completos} × {int(plantas_por_surco)} = **{int(plantas_totales):,} plantas de tomate**"
         )
 
 elif cultivo == "Maíz":
     st.header("🌽 Cálculo para Cultivo de Maíz")
-    st.write(
-        "Próximamente más configuraciones específicas para maíz y otros cultivos."
-    )
+    st.write("Próximamente más configuraciones específicas.")
 
 else:
     st.header("🌾 Configuración General")
