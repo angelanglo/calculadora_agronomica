@@ -268,44 +268,58 @@ elif cultivo == "Plátano (Triangular)":
         )
 
 elif cultivo == "Quincunce (Frutales)":
-    st.header("🍊 Sistema de Siembra: Quincunce (Frutales)")
-    st.write(
-        "Marco real con un árbol adicional (relleno) en el centro de cada rectángulo."
-    )
+    st.header("🍊 Sistema Quincunce en Asocio (Lúcuma y Aguacate)")
 
-    area_largo = st.number_input(
-        "Largo del terreno (metros)", min_value=1.0, value=100.0, key="quin_largo"
-    )
-    area_ancho = st.number_input(
-        "Ancho del terreno (metros)", min_value=1.0, value=100.0, key="quin_ancho"
-    )
-    distancia_a = st.number_input(
-        "Distancia entre plantas (Lado A en metros)",
+    area_has = st.number_input(
+        "Área total del terreno (Hectáreas)",
         min_value=0.1,
-        value=6.0,
-        key="quin_da",
+        value=20.0,
+        key="quin_has",
     )
-    distancia_b = st.number_input(
-        "Distancia entre surcos (Lado B en metros)",
-        min_value=0.1,
-        value=6.0,
-        key="quin_db",
+    distancia_q = st.number_input(
+        "Distancia de siembra (metros)", min_value=0.1, value=5.5, key="quin_dq"
     )
 
-    if st.button("Calcular Quincunce"):
-        col_marcoreal = area_largo / distancia_a
-        fil_marcoreal = area_ancho / distancia_b
-        plantas_marcoreal = math.ceil(col_marcoreal) * math.ceil(fil_marcoreal)
-        centrales = (math.ceil(col_marcoreal) - 1) * (
-            math.ceil(fil_marcoreal) - 1
-        )
-        total_quincunce = plantas_marcoreal + centrales
+    if st.button("Calcular Quincunce en Asocio"):
+        # Asumiendo el estándar de 1 Ha = 100m x 100m para el cálculo por hectárea de la guía
+        col_ha = 100.0 / distancia_q
+        fil_ha = 100.0 / distancia_q
 
-        st.success("¡Cálculo realizado!")
-        st.write(f"- **Árboles en marco real:** {plantas_marcoreal}")
-        st.write(f"- **Árboles de relleno (centrales):** {centrales}")
+        # Lúcuma (Marco Real)
+        plantas_lucuma_ha = math.floor(col_ha) * math.floor(fil_ha)
+        total_lucuma = plantas_lucuma_ha * area_has
+
+        # Aguacate (Quincunce / Relleno)
+        col_aguacate = math.floor(col_ha)
+        fil_aguacate = math.floor(fil_ha) - 1
+        plantas_aguacate_ha = col_aguacate * fil_aguacate
+        total_aguacate = plantas_aguacate_ha * area_has
+
+        total_general = total_lucuma + total_aguacate
+
+        st.success("¡Cálculo realizado con éxito!")
+        st.subheader("🌲 LUCUMA (Cultivo Principal)")
         st.write(
-            f"- **Población total en Quincunce:** {int(total_quincunce):,} árboles"
+            f"- **Columnas por Ha:** 100 m ÷ {distancia_q} m = **{col_ha:.2f}**"
+        )
+        st.write(
+            f"- **Plantas por Hectárea:** {math.floor(col_ha)} × {math.floor(fil_ha)} = **{int(plantas_lucuma_ha)} plantas**"
+        )
+        st.write(
+            f"- **Total Lúcuma ({area_has} Has):** {int(plantas_lucuma_ha)} × {area_has} = **{int(total_lucuma):,} plantas**"
+        )
+
+        st.subheader("🥑 AGUACATE (Cultivo en Quincunce)")
+        st.write(
+            f"- **Plantas por Hectárea:** {col_aguacate} × {fil_aguacate} = **{int(plantas_aguacate_ha)} plantas**"
+        )
+        st.write(
+            f"- **Total Aguacate ({area_has} Has):** {int(plantas_aguacate_ha)} × {area_has} = **{int(total_aguacate):,} plantas**"
+        )
+
+        st.write("---")
+        st.markdown(
+            f"### 📊 TOTAL GENERAL: **{int(total_general):,} plantas en total**"
         )
 
 st.write("---")
