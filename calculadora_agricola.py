@@ -15,7 +15,6 @@ st.write(
 st.caption("🚀 Creado por: Angelo Gonzalo Piedrahita Leon")
 
 
-# Función inteligente para asignar el emoji según el cultivo ingresado
 def obtener_emoji(nombre_cultivo):
   n = nombre_cultivo.lower()
   if "tomate" in n:
@@ -42,7 +41,6 @@ def obtener_emoji(nombre_cultivo):
     return "🌱"
 
 
-# Menú lateral con los 4 ejercicios exactos
 ejercicio = st.sidebar.selectbox(
     "Selecciona el Ejercicio",
     [
@@ -293,6 +291,11 @@ elif ejercicio == "3. Densidad Poblacional (Sistema Triangular)":
     st.write(
         f"- **Conversión de Área:** {area_has} Has × 10.000 ="
         f" **{area_m2:,.0f} m²**"
+    )
+    st.info(
+        f"📍 **Referencia de Superficie:** Los `{area_m2:,.0f} m²` calculados"
+        f" representan la **superficie total del terreno** disponible para el"
+        f" establecimiento del cultivo de {cultivo_3}."
     )
     st.write(f"- **Cálculo ($d^2$):** ({distancia_pl})² = {d_cuadrado:.2f}")
     st.write(f"- **Fórmula:** ({area_m2:,.0f} ÷ {d_cuadrado}) × 1,154")
