@@ -38,18 +38,15 @@ if cultivo == "Tomate":
         # Cálculos
         area_total = area_largo * area_ancho
         numero_de_surcos = area_ancho / distancia_entre_surcos
-        # Plantas por surco (Largo del surco / distancia entre plantas)
         plantas_por_surco = area_largo / distancia_entre_plantas
         plantas_totales = numero_de_surcos * plantas_por_surco
 
         st.success("¡Cálculo realizado con éxito!")
 
         # Mostrar resultados detallados
-Área total del terreno: {area_total:.2f} m²")
+        st.write(f"- **Área total del terreno:** {area_total:.2f} m²")
         st.write(f"- **Número de surcos:** {math.ceil(numero_de_surcos)}")
-        st.write(
-            f"- **Plantas por surco:** {int(plantas_por_surco)} plantas"
-        )  # Aquí te arrojará los 250 (si usas 50m y 0.4m)
+        st.write(f"- **Plantas por surco:** {int(plantas_por_surco)} plantas")
         st.write(
             f"- **Plantas totales estimadas:** {int(plantas_totales)} plantas"
         )
