@@ -57,17 +57,49 @@ if opcion == "1. Densidad Poblacional (Surcos - Típico)":
 
   st.markdown(f"## {emoji_actual} 1. Densidad Poblacional por Surcos")
 
-  # Medidas de terreno
-  col1, col2 = st.columns(2)
-  with col1:
-    largo = st.number_input(
-        "Largo del terreno (metros)", min_value=1.0, value=100.0, step=1.0
+  # Selector de cómo se conocen las medidas del terreno (¡Recuperado!)
+  tipo_medida = st.radio(
+      "¿Cómo conoces las medidas de tu terreno?",
+      ("Largo y Ancho directo", "Área Total y uno de los lados"),
+  )
+
+  if tipo_medida == "Largo y Ancho directo":
+    col1, col2 = st.columns(2)
+    with col1:
+      largo = st.number_input(
+          "Largo del terreno (metros)", min_value=1.0, value=100.0, step=1.0
+      )
+    with col2:
+      ancho = st.number_input(
+          "Ancho del terreno (metros)", min_value=1.0, value=220.0, step=1.0
+      )
+    area_total = largo * ancho
+  else:
+    area_total = st.number_input(
+        "Área Total del terreno (m²)", min_value=1.0, value=22000.0, step=100.0
     )
-  with col2:
-    ancho = st.number_input(
-        "Ancho del terreno (metros)", min_value=1.0, value=220.0, step=1.0
+    lado_conocido = st.radio(
+        "¿Qué medida conoces del terreno?",
+        ("Largo (metros)", "Ancho (metros)"),
     )
-  area_total = largo * ancho
+    if lado_conocido == "Largo (metros)":
+      largo = st.number_input(
+          "Introduce el Largo (metros)", min_value=1.0, value=100.0, step=1.0
+      )
+      ancho = area_total / largo
+      st.info(
+          f"📏 Ancho calculado automáticamente: **{ancho:,.2f} metros** para"
+          f" completar el área."
+      )
+    else:
+      ancho = st.number_input(
+          "Introduce el Ancho (metros)", min_value=1.0, value=220.0, step=1.0
+      )
+      largo = area_total / ancho
+      st.info(
+          f"📏 Largo calculado automáticamente: **{largo:,.2f} metros** para"
+          f" completar el área."
+      )
 
   st.markdown("### Distancias de Siembra")
   unidad_dist = st.radio(
@@ -107,16 +139,14 @@ if opcion == "1. Densidad Poblacional (Surcos - Típico)":
       plantas_por_surco = largo / dist_plantas
       plantas_por_surco_completas = int(plantas_por_surco)
       plantas_totales = num_surcos_completos * plantas_por_surco_completas
-      densidad_ha = (
-          10000 / (dist_surcos * dist_plantas)
-      )  # Densidad por hectárea
+      densidad_ha = 10000 / (dist_surcos * dist_plantas)
 
       st.success("¡Cálculo realizado con éxito!")
       st.markdown(
           f"""
             * **Área total:** {area_total:,.2f} m²
-            * **1. N° de surcos:** {ancho} m $\div$ {dist_surcos} m = {num_surcos:.2f} $\rightarrow$ **{num_surcos_completos}** surcos completos
-            * **2. Plantas por surco:** {largo} m $\div$ {dist_plantas} m = {plantas_por_surco:.2f} $\rightarrow$ **{plantas_por_surco_completas}** plantas por surco
+            * **1. N° de surcos:** {ancho:.2f} m $\div$ {dist_surcos} m = {num_surcos:.2f} $\rightarrow$ **{num_surcos_completos}** surcos completos
+            * **2. Plantas por surco:** {largo:.2f} m $\div$ {dist_plantas} m = {plantas_por_surco:.2f} $\rightarrow$ **{plantas_por_surco_completas}** plantas por surco
             * **3. Plantas totales:** {num_surcos_completos} $\times$ {plantas_por_surco_completas} = **{plantas_totales:,.0f}** plantas de {nombre_cultivo}
             
             ### **RESPUESTA:** Densidad poblacional = {plantas_totales:,.0f} plantas de {nombre_cultivo} (Estimada aprox. {densidad_ha:,.2f} plantas/ha)
