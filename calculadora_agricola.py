@@ -2,13 +2,14 @@ import math
 import streamlit as st
 
 st.set_page_config(
-    page_title="Calculadora Agronómica SENA", page_icon="🌱", layout="centered"
+    page_title="Calculadora Agronómica", page_icon="🌱", layout="centered"
 )
 
-st.title("🌱 Calculadora Agronómica SENA")
+st.title("🌱 Calculadora Agronómica Personal")
 st.write(
     "Herramienta integral de cálculo para densidad de población y sistemas de siembra."
 )
+st.caption("🚀 Creado por: Angelo Gonzalo Piedrahita Leon")
 
 # Menú lateral para elegir el cultivo o sistema de siembra
 cultivo = st.sidebar.selectbox(
@@ -248,7 +249,6 @@ elif cultivo == "Plátano (Triangular)":
 
     if st.button("Calcular Plátano Triangular"):
         d_cuadrado = distancia_platano**2
-        # Fórmula exacta del SENA: NP = (S / d^2) * 1,154
         plantas_totales = (superficie_m2 / d_cuadrado) * 1.154
 
         st.success("¡Cálculo realizado con éxito!")
@@ -261,7 +261,7 @@ elif cultivo == "Plátano (Triangular)":
             f"- **Cálculo ($d^2$):** ({distancia_platano})² = {d_cuadrado:.2f}"
         )
         st.write(
-            f"- **Fórmula SENA:** ({superficie_m2:,.0f} ÷ {d_cuadrado}) × 1.154"
+            f"- **Fórmula Triangular (con constante 1.154):** ({superficie_m2:,.0f} ÷ {d_cuadrado}) × 1.154"
         )
         st.write(
             f"- **Densidad Poblacional Total:** **{round(plantas_totales):,} plantas de plátano**"
@@ -309,4 +309,4 @@ elif cultivo == "Quincunce (Frutales)":
         )
 
 st.write("---")
-st.caption("Desarrollado para prácticas del SENA 🚜")
+st.caption("Desarrollado con Python y Streamlit por Angelo Gonzalo Piedrahita Leon 🚜")
