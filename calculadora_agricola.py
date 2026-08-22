@@ -117,7 +117,7 @@ if cultivo == "Tomate":
         )
 
 elif cultivo == "Papa":
-    st.header("🥔 Densidad Poblacional: Papa")
+    st.header("🥔 Densidad Poblacional y Costos: Papa")
 
     tipo_entrada_papa = st.radio(
         "¿Cómo conoces las medidas de tu terreno?",
@@ -135,7 +135,7 @@ elif cultivo == "Papa":
         lado_conocido_p = st.number_input(
             "Valor de uno de los lados (en metros)",
             min_value=1.0,
-            value=50.0,
+            value=250.0,
             key="papa_lado",
         )
         lado_calculado_p = area_total_p / lado_conocido_p
@@ -148,7 +148,6 @@ elif cultivo == "Papa":
             ["Ancho", "Largo"],
             key="papa_cual",
         )
-        # CORRECCIÓN: Asignar correctamente según lo que el usuario seleccione
         if cual_es_p == "Ancho":
             area_ancho_p = lado_conocido_p
             area_largo_p = lado_calculado_p
@@ -159,19 +158,19 @@ elif cultivo == "Papa":
         area_largo_p = st.number_input(
             "Largo del terreno (metros)",
             min_value=1.0,
-            value=50.0,
+            value=500.0,
             key="papa_largo",
         )
         area_ancho_p = st.number_input(
             "Ancho del terreno (metros)",
             min_value=1.0,
-            value=20.0,
+            value=250.0,
             key="papa_ancho",
         )
         area_total_p = area_largo_p * area_ancho_p
 
     st.write("---")
-    st.subheader("Distancias de Siembra")
+    st.subheader("Distancias y Datos Adicionales")
     unidad_medida_p = st.radio(
         "Unidad de medida para distancias",
         ["Centímetros (cm)", "Metros (m)"],
@@ -191,6 +190,16 @@ elif cultivo == "Papa":
         key="papa_dp",
     )
 
+    peso_papa_g = st.number_input(
+        "Peso por papa (gramos)", min_value=0.1, value=32.0, key="papa_peso"
+    )
+    costo_kg = st.number_input(
+        "Costo por kg de papa ($)",
+        min_value=0.1,
+        value=120.0,
+        key="papa_costo",
+    )
+
     if unidad_medida_p == "Centímetros (cm)":
         distancia_entre_surcos_p = d_surcos_input_p / 100.0
         distancia_entre_plantas_p = d_plantas_input_p / 100.0
@@ -198,22 +207,34 @@ elif cultivo == "Papa":
         distancia_entre_surcos_p = d_surcos_input_p
         distancia_entre_plantas_p = d_plantas_input_p
 
-    if st.button("Calcular Papa"):
+    if st.button("Calcular Papa Completo"):
         surcos_p = area_ancho_p / distancia_entre_surcos_p
-        plantas_surco_p = area_largo_p / distancia_entre_plantas_p
         surcos_completos_p = math.floor(surcos_p)
+
+        plantas_surco_p = area_largo_p / distancia_entre_plantas_p
+
         total_papas = surcos_completos_p * plantas_surco_p
+
+        peso_kg_por_papa = peso_papa_g / 1000.0
+        total_kg_papa = total_papas * peso_kg_por_papa
+        costo_total = total_kg_papa * costo_kg
 
         st.success("¡Cálculo realizado con éxito!")
         st.write(f"- **Área total:** {area_total_p:,.2f} m²")
         st.write(
-            f"- **Número de surcos:** {area_ancho_p} ÷ {distancia_entre_surcos_p} = **{surcos_completos_p} surcos**"
+            f"- **1. Número de surcos:** {area_ancho_p} ÷ {distancia_entre_surcos_p} = {surcos_p:.2f} $\\rightarrow$ **{surcos_completos_p} surcos completos**"
         )
         st.write(
-            f"- **Plantas por surco:** {area_largo_p} ÷ {distancia_entre_plantas_p} = **{int(plantas_surco_p)}**"
+            f"- **2. Plantas por surco:** {area_largo_p} ÷ {distancia_entre_plantas_p} = **{int(plantas_surco_p)} plantas**"
         )
         st.write(
-            f"- **Población total estimada:** {int(total_papas):,} plantas de papa"
+            f"- **3. Plantas totales:** {surcos_completos_p} × {int(plantas_surco_p)} = **{int(total_papas):,} plantas de papa**"
+        )
+        st.write(
+            f"- **4. Cantidad de papa (kg):** {int(total_papas):,} × {peso_kg_por_papa} kg = **{total_kg_papa:,.3f} kg**"
+        )
+        st.markdown(
+            f"- **5. Costo total:** {total_kg_papa:,.3f} kg × ${costo_kg:,.1f} = **${costo_total:,.2f}**"
         )
 
 elif cultivo == "Plátano (Triangular)":
