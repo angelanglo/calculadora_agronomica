@@ -7,7 +7,7 @@ st.set_page_config(
 
 st.title("🌱 Calculadora Agronómica Personalizada")
 st.write(
-    "Herramienta integral de cálculo para densidad de población y sistemas de siembra con nombres editables."
+    "Herramienta integral de cálculo para densidad de población y sistemas de siembra."
 )
 st.caption("🚀 Creado por: Angelo Gonzalo Piedrahita Leon")
 
@@ -25,7 +25,6 @@ ejercicio = st.sidebar.selectbox(
 if ejercicio == "1. Densidad Poblacional (Surcos - Tipo 1)":
     st.header("🍅 1. Densidad Poblacional por Surcos")
     
-    # Campo editable para el nombre del cultivo
     cultivo_1 = st.text_input("Nombre del Cultivo", value="Tomate")
 
     tipo_entrada_t = st.radio(
@@ -54,11 +53,24 @@ if ejercicio == "1. Densidad Poblacional (Surcos - Tipo 1)":
 
     st.write("---")
     st.subheader("Distancias de Siembra")
-    d_surcos_t = st.number_input("Distancia entre surcos (D/S en cm)", min_value=1.0, value=96.0, key="t_ds")
-    d_plantas_t = st.number_input("Distancia entre plantas en el surco (D/P en cm)", min_value=1.0, value=40.0, key="t_dp")
+    
+    # Selector de unidades recuperado para el ejercicio 1
+    unidad_medida_t = st.radio(
+        "Unidad de medida para las distancias de siembra",
+        ["Centímetros (cm)", "Metros (m)"],
+        key="t_unidad"
+    )
 
-    ds_m = d_surcos_t / 100.0
-    dp_m = d_plantas_t / 100.0
+    d_surcos_t = st.number_input(f"Distancia entre surcos (D/S)", min_value=0.1, value=96.0, key="t_ds")
+    d_plantas_t = st.number_input(f"Distancia entre plantas en el surco (D/P)", min_value=0.1, value=40.0, key="t_dp")
+
+    # Conversión condicional según la unidad seleccionada
+    if unidad_medida_t == "Centímetros (cm)":
+        ds_m = d_surcos_t / 100.0
+        dp_m = d_plantas_t / 100.0
+    else:
+        ds_m = d_surcos_t
+        dp_m = d_plantas_t
 
     if st.button(f"Calcular {cultivo_1}"):
         num_surcos = area_ancho_t / ds_m
@@ -76,7 +88,6 @@ if ejercicio == "1. Densidad Poblacional (Surcos - Tipo 1)":
 elif ejercicio == "2. Densidad Poblacional (Surcos con Costos - Tipo 2)":
     st.header("🥔 2. Densidad Poblacional con Costos y Pesos")
     
-    # Campo editable para el nombre del cultivo
     cultivo_2 = st.text_input("Nombre del Cultivo", value="Papa")
 
     tipo_entrada_p = st.radio(
@@ -105,8 +116,23 @@ elif ejercicio == "2. Densidad Poblacional (Surcos con Costos - Tipo 2)":
 
     st.write("---")
     st.subheader("Distancias, Pesos y Costos")
-    d_surcos_p = st.number_input("Distancia entre surcos (D/S en metros)", min_value=0.01, value=0.80, key="p_ds")
-    d_plantas_p = st.number_input("Distancia entre plantas en el surco (D/P en metros)", min_value=0.01, value=0.50, key="p_dp")
+    
+    unidad_medida_p = st.radio(
+        "Unidad de medida para las distancias de siembra",
+        ["Metros (m)", "Centímetros (cm)"],
+        key="p_unidad"
+    )
+
+    d_surcos_p_in = st.number_input("Distancia entre surcos (D/S)", min_value=0.01, value=0.80, key="p_ds")
+    d_plantas_p_in = st.number_input("Distancia entre plantas en el surco (D/P)", min_value=0.01, value=0.50, key="p_dp")
+    
+    if unidad_medida_p == "Centímetros (cm)":
+        d_surcos_p = d_surcos_p_in / 100.0
+        d_plantas_p = d_plantas_p_in / 100.0
+    else:
+        d_surcos_p = d_surcos_p_in
+        d_plantas_p = d_plantas_p_in
+
     peso_g = st.number_input(f"Peso por unidad de {cultivo_2} (gramos)", min_value=0.1, value=32.0, key="p_peso")
     costo_kg = st.number_input("Costo por kg ($)", min_value=0.1, value=120.0, key="p_costo")
 
@@ -132,9 +158,7 @@ elif ejercicio == "2. Densidad Poblacional (Surcos con Costos - Tipo 2)":
 elif ejercicio == "3. Densidad Poblacional (Sistema Triangular)":
     st.header("🍌 3. Densidad Poblacional (Sistema Triangular)")
     
-    # Campo editable para el nombre del cultivo
     cultivo_3 = st.text_input("Nombre del Cultivo", value="Plátano")
-    
     area_has = st.number_input("Área del terreno (Hectáreas)", min_value=0.01, value=28.7, key="pl_has")
     distancia_pl = st.number_input("Distancia de siembra (d en metros)", min_value=0.1, value=2.5, key="pl_d")
 
@@ -152,7 +176,6 @@ elif ejercicio == "3. Densidad Poblacional (Sistema Triangular)":
 elif ejercicio == "4. Sistema Quincunce (Asocio de Cultivos)":
     st.header("🍊 4. Sistema Quincunce (Asocio de Dos Cultivos)")
     
-    # Campos editables para los dos cultivos en asocio
     cultivo_principal = st.text_input("Nombre Cultivo Principal (Temporal / Relleno)", value="Lúcuma")
     cultivo_secundario = st.text_input("Nombre Cultivo Secundario (Permanente / Quincunce)", value="Aguacate")
     
@@ -163,13 +186,11 @@ elif ejercicio == "4. Sistema Quincunce (Asocio de Cultivos)":
         col = 100.0 / distancia_q
         fil = 100.0 / distancia_q
         
-        # Cultivo Principal
         col_p = math.floor(col)
         fil_p = math.floor(fil)
         princ_ha = col_p * fil_p
         total_princ = princ_ha * area_q_has
 
-        # Cultivo Secundario (Quincunce)
         fil_s = fil_p - 1
         sec_ha = fil_s * fil_s
         total_sec = sec_ha * area_q_has
