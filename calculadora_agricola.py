@@ -31,7 +31,6 @@ opcion = st.sidebar.selectbox(
 
 # --- EJERCICIO 1 ---
 if opcion == "1. Densidad Poblacional (Surcos - Típico)":
-  # Campo de texto para el cultivo
   nombre_cultivo = st.text_input("Nombre del Cultivo", value="Tomate")
 
 
@@ -58,22 +57,70 @@ if opcion == "1. Densidad Poblacional (Surcos - Típico)":
 
   st.markdown(f"## {emoji_actual} 1. Densidad Poblacional por Surcos")
 
-  col1, col2 = st.columns(2)
-  with col1:
-    dist_surcos = st.number_input(
-        "Distancia entre surcos (m)", min_value=0.01, value=1.0, step=0.05
-    )
-  with col2:
-    dist_plantas = st.number_input(
-        "Distancia entre plantas (m)", min_value=0.01, value=0.4, step=0.05
+  # Opciones avanzadas de terreno que tenías antes
+  tipo_medida = st.radio(
+      "¿Cómo conoces las medidas de tu terreno?",
+      ("Largo y Ancho directo", "Área Total y uno de los lados"),
+  )
+
+  if tipo_medida == "Largo y Ancho directo":
+    col1, col2 = st.columns(2)
+    with col1:
+      largo = st.number_input(
+          "Largo del terreno (metros)", min_value=1.0, value=100.0, step=1.0
+      )
+    with col2:
+      ancho = st.number_input(
+          "Ancho del terreno (metros)", min_value=1.0, value=220.0, step=1.0
+      )
+    area_total = largo * ancho
+  else:
+    area_total = st.number_input(
+        "Área Total del terreno (m²)", min_value=1.0, value=22000.0, step=100.0
     )
 
-  if st.button("Calcular Densidad"):
+  st.markdown("### Distancias de Siembra")
+  unidad_dist = st.radio(
+      "Unidad de medida para las distancias de siembra",
+      ("Centímetros (cm)", "Metros (m)"),
+  )
+
+  col3, col4 = st.columns(2)
+  with col3:
+    dist_surcos_input = st.number_input(
+        "Distancia entre surcos (D/S)",
+        min_value=1.0,
+        value=96.0 if unidad_dist == "Centímetros (cm)" else 0.96,
+        step=1.0 if unidad_dist == "Centímetros (cm)" else 0.05,
+    )
+  with col4:
+    dist_plantas_input = st.number_input(
+        "Distancia entre plantas en el surco (D/P)",
+        min_value=1.0,
+        value=40.0 if unidad_dist == "Centímetros (cm)" else 0.40,
+        step=1.0 if unidad_dist == "Centímetros (cm)" else 0.05,
+    )
+
+  # Convertir a metros si el usuario eligió centímetros
+  if unidad_dist == "Centímetros (cm)":
+    dist_surcos = dist_surcos_input / 100.0
+    dist_plantas = dist_plantas_input / 100.0
+  else:
+    dist_surcos = dist_surcos_input
+    dist_plantas = dist_plantas_input
+
+  if st.button(f"Calcular {nombre_cultivo}"):
     if dist_surcos > 0 and dist_plantas > 0:
       area_por_planta = dist_surcos * dist_plantas
       densidad_ha = 10000 / area_por_planta
+      total_plantas_terreno = densidad_ha * (area_total / 10000)
+
       st.success(f"🌾 **Cultivo:** {nombre_cultivo}")
       st.info(f"📊 **Densidad estimada:** {densidad_ha:,.2f} plantas/ha")
+      st.write(
+          f"🌱 **Cantidad estimada para tu terreno ({area_total:,.2f} m²):**"
+          f" **{total_plantas_terreno:,.0f}** plantas"
+      )
     else:
       st.error("⚠️ Las distancias deben ser mayores a cero.")
 
