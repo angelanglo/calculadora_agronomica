@@ -22,14 +22,21 @@ if cultivo == "Tomate":
     tipo_entrada = st.radio(
         "¿Cómo conoces las medidas de tu terreno?",
         ["Largo y Ancho directo", "Área Total y uno de los lados"],
+        key="tomate_tipo",
     )
 
     if tipo_entrada == "Área Total y uno de los lados":
         area_total = st.number_input(
-            "Área total del terreno (m²)", min_value=1.0, value=22000.0
+            "Área total del terreno (m²)",
+            min_value=1.0,
+            value=22000.0,
+            key="tomate_area",
         )
         lado_conocido = st.number_input(
-            "Valor de uno de los lados (en metros)", min_value=1.0, value=220.0
+            "Valor de uno de los lados (en metros)",
+            min_value=1.0,
+            value=220.0,
+            key="tomate_lado",
         )
         lado_calculado = area_total / lado_conocido
         st.info(
@@ -37,7 +44,9 @@ if cultivo == "Tomate":
         )
 
         cual_es = st.selectbox(
-            "El valor que ingresaste arriba corresponde a:", ["Ancho", "Largo"]
+            "El valor que ingresaste arriba corresponde a:",
+            ["Ancho", "Largo"],
+            key="tomate_cual",
         )
         if cual_es == "Ancho":
             area_ancho = lado_conocido
@@ -47,24 +56,38 @@ if cultivo == "Tomate":
             area_ancho = lado_calculado
     else:
         area_largo = st.number_input(
-            "Largo del terreno (metros)", min_value=1.0, value=100.0
+            "Largo del terreno (metros)",
+            min_value=1.0,
+            value=100.0,
+            key="tomate_largo",
         )
         area_ancho = st.number_input(
-            "Ancho del terreno (metros)", min_value=1.0, value=220.0
+            "Ancho del terreno (metros)",
+            min_value=1.0,
+            value=220.0,
+            key="tomate_ancho",
         )
         area_total = area_largo * area_ancho
 
     st.write("---")
     st.subheader("Distancias de Siembra")
     unidad_medida = st.radio(
-        "Unidad de medida para distancias", ["Centímetros (cm)", "Metros (m)"]
+        "Unidad de medida para distancias",
+        ["Centímetros (cm)", "Metros (m)"],
+        key="tomate_unidad",
     )
 
     d_surcos_input = st.number_input(
-        "Distancia entre surcos (D/S)", min_value=0.1, value=96.0
+        "Distancia entre surcos (D/S)",
+        min_value=0.1,
+        value=96.0,
+        key="tomate_ds",
     )
     d_plantas_input = st.number_input(
-        "Distancia entre plantas en el surco (D/P)", min_value=0.1, value=40.0
+        "Distancia entre plantas en el surco (D/P)",
+        min_value=0.1,
+        value=40.0,
+        key="tomate_dp",
     )
 
     if unidad_medida == "Centímetros (cm)":
@@ -94,30 +117,99 @@ if cultivo == "Tomate":
 
 elif cultivo == "Papa":
     st.header("🥔 Densidad Poblacional: Papa")
-    area_largo = st.number_input(
-        "Largo del terreno (metros)", min_value=1.0, value=50.0
-    )
-    area_ancho = st.number_input(
-        "Ancho del terreno (metros)", min_value=1.0, value=20.0
+
+    tipo_entrada_papa = st.radio(
+        "¿Cómo conoces las medidas de tu terreno?",
+        ["Largo y Ancho directo", "Área Total y uno de los lados"],
+        key="papa_tipo",
     )
 
-    d_surcos = st.number_input(
-        "Distancia entre surcos (metros)", min_value=0.1, value=0.9
+    if tipo_entrada_papa == "Área Total y uno de los lados":
+        area_total_p = st.number_input(
+            "Área total del terreno (m²)",
+            min_value=1.0,
+            value=1000.0,
+            key="papa_area",
+        )
+        lado_conocido_p = st.number_input(
+            "Valor de uno de los lados (en metros)",
+            min_value=1.0,
+            value=50.0,
+            key="papa_lado",
+        )
+        lado_calculado_p = area_total_p / lado_conocido_p
+        st.info(
+            f"💡 El otro lado calculado es de: **{lado_calculado_p:.2f} metros**"
+        )
+
+        cual_es_p = st.selectbox(
+            "El valor que ingresaste arriba corresponde a:",
+            ["Ancho", "Largo"],
+            key="papa_cual",
+        )
+        if cual_es_p == "Ancho":
+            area_ancho_p = lado_conocido_p
+            area_largo_p = lado_calculado_p
+        else:
+            area_largo_p = lado_conocido_p
+            area_ancho_p = lado_calculado_p
+    else:
+        area_largo_p = st.number_input(
+            "Largo del terreno (metros)",
+            min_value=1.0,
+            value=50.0,
+            key="papa_largo",
+        )
+        area_ancho_p = st.number_input(
+            "Ancho del terreno (metros)",
+            min_value=1.0,
+            value=20.0,
+            key="papa_ancho",
+        )
+        area_total_p = area_largo_p * area_ancho_p
+
+    st.write("---")
+    st.subheader("Distancias de Siembra")
+    unidad_medida_p = st.radio(
+        "Unidad de medida para distancias",
+        ["Centímetros (cm)", "Metros (m)"],
+        key="papa_unidad",
     )
-    d_plantas = st.number_input(
-        "Distancia entre plantas (metros)", min_value=0.01, value=0.3
+
+    d_surcos_input_p = st.number_input(
+        "Distancia entre surcos (D/S)",
+        min_value=0.1,
+        value=90.0,
+        key="papa_ds",
     )
+    d_plantas_input_p = st.number_input(
+        "Distancia entre plantas en el surco (D/P)",
+        min_value=0.1,
+        value=30.0,
+        key="papa_dp",
+    )
+
+    if unidad_medida_p == "Centímetros (cm)":
+        distancia_entre_surcos_p = d_surcos_input_p / 100.0
+        distancia_entre_plantas_p = d_plantas_input_p / 100.0
+    else:
+        distancia_entre_surcos_p = d_surcos_input_p
+        distancia_entre_plantas_p = d_plantas_input_p
 
     if st.button("Calcular Papa"):
-        area_total = area_largo * area_ancho
-        surcos = area_ancho / d_surcos
-        plantas_surco = area_largo / d_plantas
-        total_papas = math.floor(surcos) * plantas_surco
+        surcos_p = area_ancho_p / distancia_entre_surcos_p
+        plantas_surco_p = area_largo_p / distancia_entre_plantas_p
+        surcos_completos_p = math.floor(surcos_p)
+        total_papas = surcos_completos_p * plantas_surco_p
 
-        st.success("¡Cálculo realizado!")
-        st.write(f"- **Área total:** {area_total:.2f} m²")
-        st.write(f"- **Número de surcos:** {math.floor(surcos)}")
-        st.write(f"- **Plantas por surco:** {int(plantas_surco)}")
+        st.success("¡Cálculo realizado con éxito!")
+        st.write(f"- **Área total:** {area_total_p:,.2f} m²")
+        st.write(
+            f"- **Número de surcos:** {area_ancho_p} ÷ {distancia_entre_surcos_p} = **{surcos_completos_p} surcos**"
+        )
+        st.write(
+            f"- **Plantas por surco:** {area_largo_p} ÷ {distancia_entre_plantas_p} = **{int(plantas_surco_p)}**"
+        )
         st.write(
             f"- **Población total estimada:** {int(total_papas):,} plantas de papa"
         )
@@ -129,19 +221,17 @@ elif cultivo == "Plátano (Triangular)":
     )
 
     area_largo = st.number_input(
-        "Largo del lote (metros)", min_value=1.0, value=100.0
+        "Largo del lote (metros)", min_value=1.0, value=100.0, key="plat_largo"
     )
     area_ancho = st.number_input(
-        "Ancho del lote (metros)", min_value=1.0, value=50.0
+        "Ancho del lote (metros)", min_value=1.0, value=50.0, key="plat_ancho"
     )
     distancia = st.number_input(
-        "Distancia entre plantas (metros)", min_value=0.1, value=3.0
+        "Distancia entre plantas (metros)", min_value=0.1, value=3.0, key="plat_d"
     )
 
     if st.button("Calcular Triangular"):
         area_total = area_largo * area_ancho
-        # Fórmula aproximada para triangular: Área / (0.866 * d * d) o similar basada en triángulo equilátero
-        # Área de un triángulo equilátero = (sqrt(3)/4) * d^2 ≈ 0.433 * d^2 por planta, o densidad = 2 / (sqrt(3) * d^2) * Area
         factor_triangular = (math.sqrt(3) / 2) * (distancia**2)
         plantas_totales = area_total / factor_triangular
 
@@ -158,25 +248,28 @@ elif cultivo == "Quincunce (Frutales)":
     )
 
     area_largo = st.number_input(
-        "Largo del terreno (metros)", min_value=1.0, value=100.0
+        "Largo del terreno (metros)", min_value=1.0, value=100.0, key="quin_largo"
     )
     area_ancho = st.number_input(
-        "Ancho del terreno (metros)", min_value=1.0, value=100.0
+        "Ancho del terreno (metros)", min_value=1.0, value=100.0, key="quin_ancho"
     )
     distancia_a = st.number_input(
-        "Distancia entre plantas (Lado A en metros)", min_value=0.1, value=6.0
+        "Distancia entre plantas (Lado A en metros)",
+        min_value=0.1,
+        value=6.0,
+        key="quin_da",
     )
     distancia_b = st.number_input(
-        "Distancia entre surcos (Lado B en metros)", min_value=0.1, value=6.0
+        "Distancia entre surcos (Lado B en metros)",
+        min_value=0.1,
+        value=6.0,
+        key="quin_db",
     )
 
     if st.button("Calcular Quincunce"):
-        # Plantas en marco real
         col_marcoreal = area_largo / distancia_a
         fil_marcoreal = area_ancho / distancia_b
         plantas_marcoreal = math.ceil(col_marcoreal) * math.ceil(fil_marcoreal)
-
-        # Plantas centrales (quincunce) = (Columnas - 1) * (Filas - 1)
         centrales = (math.ceil(col_marcoreal) - 1) * (
             math.ceil(fil_marcoreal) - 1
         )
