@@ -281,45 +281,60 @@ elif cultivo == "Quincunce (Frutales)":
     )
 
     if st.button("Calcular Quincunce en Asocio"):
-        # Asumiendo el estándar de 1 Ha = 100m x 100m para el cálculo por hectárea de la guía
-        col_ha = 100.0 / distancia_q
-        fil_ha = 100.0 / distancia_q
+        # Cálculos base por hectárea (tomando 100m por lado)
+        col_calc = 100.0 / distancia_q
+        fil_calc = 100.0 / distancia_q
 
-        # Lúcuma (Marco Real)
-        plantas_lucuma_ha = math.floor(col_ha) * math.floor(fil_ha)
+        # Lúcuma (Cultivo Principal)
+        cols_lucuma = math.floor(col_calc)
+        filas_lucuma = math.floor(fil_calc)
+        plantas_lucuma_ha = cols_lucuma * filas_lucuma
         total_lucuma = plantas_lucuma_ha * area_has
 
-        # Aguacate (Quincunce / Relleno)
-        col_aguacate = math.floor(col_ha)
-        fil_aguacate = math.floor(fil_ha) - 1
-        plantas_aguacate_ha = col_aguacate * fil_aguacate
+        # Aguacate (Cultivo en Quincunce - Relleno restando 1 en filas)
+        cols_aguacate = cols_lucuma
+        filas_aguacate = filas_lucuma - 1
+        plantas_aguacate_ha = cols_aguacate * filas_aguacate
         total_aguacate = plantas_aguacate_ha * area_has
 
         total_general = total_lucuma + total_aguacate
 
         st.success("¡Cálculo realizado con éxito!")
-        st.subheader("🌲 LUCUMA (Cultivo Principal)")
+
+        st.subheader("🌲 LÚCUMA (Cultivo Principal)")
         st.write(
-            f"- **Columnas por Ha:** 100 m ÷ {distancia_q} m = **{col_ha:.2f}**"
+            f"- **1. Columnas:** 100 m ÷ {distancia_q} m = **{cols_lucuma}**"
         )
         st.write(
-            f"- **Plantas por Hectárea:** {math.floor(col_ha)} × {math.floor(fil_ha)} = **{int(plantas_lucuma_ha)} plantas**"
+            f"- **2. Filas:** 100 m ÷ {distancia_q} m = **{filas_lucuma}**"
         )
         st.write(
-            f"- **Total Lúcuma ({area_has} Has):** {int(plantas_lucuma_ha)} × {area_has} = **{int(total_lucuma):,} plantas**"
+            f"- **3. Plantas / Ha:** {cols_lucuma} × {filas_lucuma} = **{plantas_lucuma_ha} plantas**"
+        )
+        st.write(
+            f"- **4. Plantas totales ({area_has} Has):** {plantas_lucuma_ha} × {area_has} = **{int(total_lucuma):,} plantas de lúcuma**"
         )
 
         st.subheader("🥑 AGUACATE (Cultivo en Quincunce)")
         st.write(
-            f"- **Plantas por Hectárea:** {col_aguacate} × {fil_aguacate} = **{int(plantas_aguacate_ha)} plantas**"
+            f"- **1. Columnas:** 100 m ÷ {distancia_q} m = **{cols_aguacate}**"
         )
         st.write(
-            f"- **Total Aguacate ({area_has} Has):** {int(plantas_aguacate_ha)} × {area_has} = **{int(total_aguacate):,} plantas**"
+            f"- **2. Filas:** ({filas_lucuma} - 1) = **{filas_aguacate}**"
+        )
+        st.write(
+            f"- **3. Plantas / Ha:** {cols_aguacate} × {filas_aguacate} = **{plantas_aguacate_ha} plantas**"
+        )
+        st.write(
+            f"- **4. Plantas totales ({area_has} Has):** {plantas_aguacate_ha} × {area_has} = **{int(total_aguacate):,} plantas de aguacate**"
         )
 
         st.write("---")
+        st.markdown(f"### 📊 RESUMEN TOTAL GENERAL")
+        st.write(f"- **Lúcuma:** {int(total_lucuma):,} plantas")
+        st.write(f"- **Aguacate:** {int(total_aguacate):,} plantas")
         st.markdown(
-            f"### 📊 TOTAL GENERAL: **{int(total_general):,} plantas en total**"
+            f"### **TOTAL GENERAL = {int(total_general):,} plantas**"
         )
 
 st.write("---")
