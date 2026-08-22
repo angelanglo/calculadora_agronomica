@@ -57,7 +57,6 @@ if opcion == "1. Densidad Poblacional (Surcos - Típico)":
 
   st.markdown(f"## {emoji_actual} 1. Densidad Poblacional por Surcos")
 
-  # Selector de cómo se conocen las medidas del terreno (¡Recuperado!)
   tipo_medida = st.radio(
       "¿Cómo conoces las medidas de tu terreno?",
       ("Largo y Ancho directo", "Área Total y uno de los lados"),
@@ -123,7 +122,6 @@ if opcion == "1. Densidad Poblacional (Surcos - Típico)":
         step=1.0 if unidad_dist == "Centímetros (cm)" else 0.05,
     )
 
-  # Conversión a metros
   if unidad_dist == "Centímetros (cm)":
     dist_surcos = dist_surcos_input / 100.0
     dist_plantas = dist_plantas_input / 100.0
@@ -133,7 +131,6 @@ if opcion == "1. Densidad Poblacional (Surcos - Típico)":
 
   if st.button(f"Calcular {nombre_cultivo}"):
     if dist_surcos > 0 and dist_plantas > 0:
-      # Cálculos detallados originales
       num_surcos = ancho / dist_surcos
       num_surcos_completos = int(num_surcos)
       plantas_por_surco = largo / dist_plantas
@@ -159,6 +156,10 @@ if opcion == "1. Densidad Poblacional (Surcos - Típico)":
 # --- EJERCICIO 2 ---
 elif opcion == "2. Densidad Poblacional (Área Total)":
   st.markdown("## 📐 2. Densidad Poblacional por Área Total")
+  st.markdown(
+      "Calcula la densidad de plantas por hectárea conociendo el área total del"
+      " terreno y el número de plantas establecidas."
+  )
 
   area_total_m2 = st.number_input(
       "Área total del terreno (m²)", min_value=1.0, value=5000.0, step=100.0
@@ -167,20 +168,32 @@ elif opcion == "2. Densidad Poblacional (Área Total)":
       "Número total de plantas sembradas", min_value=1.0, value=12500.0, step=50.0
   )
 
-  if st.button("Calcular Densidad Total"):
-    densidad = num_plantas / (area_total_m2 / 10000)
-    st.info(
-        f"📊 **Densidad poblacional estimada:** {densidad:,.2f} plantas por"
-        " hectárea"
-    )
+  if st.button("Calcular Densidad por Área Total"):
+    if area_total_m2 > 0:
+      hectareas = area_total_m2 / 10000
+      densidad = num_plantas / hectareas
+      st.success("¡Cálculo realizado con éxito!")
+      st.markdown(
+          f"""
+            * **Área total en hectáreas:** {area_total_m2:,.2f} m² $\div$ 10,000 = **{hectareas:,.4f} ha**
+            * **Plantas sembradas:** {num_plantas:,.0f} plantas
+            
+            ### **RESPUESTA:** Densidad poblacional = **{densidad:,.2f}** plantas por hectárea
+            """
+      )
+    else:
+      st.error("⚠️ El área debe ser mayor a cero.")
 
 
 # --- EJERCICIO 3 ---
 elif opcion == "3. Conversión de Unidades de Superficie":
   st.markdown("## 🔄 3. Conversión de Unidades de Superficie")
+  st.markdown(
+      "Convierte rápidamente entre hectáreas (ha) y metros cuadrados (m²)."
+  )
 
   tipo_conversion = st.radio(
-      "Selecciona la conversión:",
+      "Selecciona la dirección de la conversión:",
       ("Hectáreas a Metros Cuadrados (m²)", "Metros Cuadrados (m²) a Hectáreas"),
   )
 
@@ -190,7 +203,14 @@ elif opcion == "3. Conversión de Unidades de Superficie":
     )
     if st.button("Convertir a m²"):
       resultado_m2 = val_ha * 10000
-      st.success(f"✨ **{val_ha} ha** equivalen a **{resultado_m2:,.2f} m²**")
+      st.success("¡Conversión realizada con éxito!")
+      st.markdown(
+          f"""
+            * **Fórmula:** {val_ha} ha $\times$ 10,000
+            
+            ### **RESPUESTA:** Equivalente a **{resultado_m2:,.2f} m²**
+            """
+      )
   else:
     val_m2 = st.number_input(
         "Introduce los Metros Cuadrados (m²)",
@@ -200,14 +220,23 @@ elif opcion == "3. Conversión de Unidades de Superficie":
     )
     if st.button("Convertir a Hectáreas"):
       resultado_ha = val_m2 / 10000
-      st.success(
-          f"✨ **{val_m2:,.2f} m²** equivalen a **{resultado_ha:,.4f} ha**"
+      st.success("¡Conversión realizada con éxito!")
+      st.markdown(
+          f"""
+            * **Fórmula:** {val_m2:,.2f} m² $\div$ 10,000
+            
+            ### **RESPUESTA:** Equivalente a **{resultado_ha:,.4f} ha**
+            """
       )
 
 
 # --- EJERCICIO 4 ---
 elif opcion == "4. Requerimiento de Semillas / Insumos":
   st.markdown("## 📦 4. Requerimiento de Semillas y Plántulas")
+  st.markdown(
+      "Calcula el total exacto de semillas o plántulas a comprar considerando"
+      " el porcentaje estimado de marras o pérdidas."
+  )
 
   area_ha = st.number_input(
       "Área total a sembrar (en hectáreas)",
@@ -228,12 +257,18 @@ elif opcion == "4. Requerimiento de Semillas / Insumos":
       step=0.5,
   )
 
-  if st.button("Calcular Insumos"):
+  if st.button("Calcular Requerimiento Total"):
     plantas_netas = area_ha * densidad_ha
     total_con_perdida = plantas_netas * (1 + (porcentaje_perdida / 100))
 
-    st.success(f"🌱 **Plantas netas requeridas:** {plantas_netas:,.0f}")
-    st.warning(
-        f"📦 **Total con margen de pérdida ({porcentaje_perdida}%):**"
-        f" **{total_con_perdida:,.0f}** semillas o plántulas a comprar."
+    st.success("¡Cálculo realizado con éxito!")
+    st.markdown(
+        f"""
+          * **Área a sembrar:** {area_ha:,.2f} ha
+          * **Densidad por hectárea:** {densidad_ha:,.2f} plantas/ha
+          * **Plantas netas requeridas:** {area_ha} $\times$ {densidad_ha} = **{plantas_netas:,.0f}** plantas
+          * **Margen de pérdida estimado:** {porcentaje_perdida}%
+          
+          ### **RESPUESTA:** Total de semillas/plántulas a comprar = **{total_con_perdida:,.0f}** unidades
+          """
     )
