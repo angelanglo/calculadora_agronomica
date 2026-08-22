@@ -129,7 +129,7 @@ elif cultivo == "Papa":
         area_total_p = st.number_input(
             "Área total del terreno (m²)",
             min_value=1.0,
-            value=1000.0,
+            value=125000.0,
             key="papa_area",
         )
         lado_conocido_p = st.number_input(
@@ -148,6 +148,7 @@ elif cultivo == "Papa":
             ["Ancho", "Largo"],
             key="papa_cual",
         )
+        # CORRECCIÓN: Asignar correctamente según lo que el usuario seleccione
         if cual_es_p == "Ancho":
             area_ancho_p = lado_conocido_p
             area_largo_p = lado_calculado_p
@@ -180,13 +181,13 @@ elif cultivo == "Papa":
     d_surcos_input_p = st.number_input(
         "Distancia entre surcos (D/S)",
         min_value=0.1,
-        value=90.0,
+        value=80.0,
         key="papa_ds",
     )
     d_plantas_input_p = st.number_input(
         "Distancia entre plantas en el surco (D/P)",
         min_value=0.1,
-        value=30.0,
+        value=50.0,
         key="papa_dp",
     )
 
@@ -337,4 +338,4 @@ elif cultivo == "Quincunce (Frutales)":
         )
 
 st.write("---")
-st.caption("Desarrollado con Python y Streamlit por Angelo Gonzalo Piedrahita Leon 🚜")
+st.caption("Desarrollado con Python y Streamlit por Angelo Gonzalo Piedrahita Leon 🚀")
