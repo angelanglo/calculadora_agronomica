@@ -2,7 +2,7 @@ import math
 import streamlit as st
 
 st.set_page_config(
-    page_title="Calculadora Agronómica", page_icon="🌱", layout="centered"
+    page_title="Calculadora Agronómica SENA", page_icon="🌱", layout="centered"
 )
 
 st.title("🌱 Calculadora Agronómica Personal")
@@ -11,284 +11,174 @@ st.write(
 )
 st.caption("🚀 Creado por: Angelo Gonzalo Piedrahita Leon")
 
-# Menú lateral para elegir el sistema de siembra
-sistema = st.sidebar.selectbox(
-    "Selecciona el Sistema de Siembra",
+# Menú lateral con los 4 ejercicios exactos
+ejercicio = st.sidebar.selectbox(
+    "Selecciona el Ejercicio",
     [
-        "Densidad por Surcos",
-        "Sistema Triangular",
-        "Sistema Quincunce (Asocio)",
+        "1. Densidad Poblacional (Tomate)",
+        "2. Densidad Poblacional (Papa)",
+        "3. Densidad Poblacional (Plátano - Triangular)",
+        "4. Sistema Quincunce (Frutales)",
     ],
 )
 
-if sistema == "Densidad por Surcos":
-    st.header("📏 Densidad Poblacional por Surcos")
+if ejercicio == "1. Densidad Poblacional (Tomate)":
+    st.header("🍅 1. Densidad Poblacional (Tomate)")
     
-    # Nombre personalizado para este ejercicio
-    nombre_cultivo = st.text_input(
-        "📝 Nombre del Cultivo", value="Papa", key="surcos_nombre"
-    )
-
-    tipo_entrada = st.radio(
+    tipo_entrada_t = st.radio(
         "¿Cómo conoces las medidas de tu terreno?",
         ["Largo y Ancho directo", "Área Total y uno de los lados"],
-        key="surcos_tipo",
+        key="t_tipo"
     )
 
-    if tipo_entrada == "Área Total y uno de los lados":
-        area_total = st.number_input(
-            "Área total del terreno (m²)",
-            min_value=1.0,
-            value=125000.0,
-            key="surcos_area",
-        )
-        lado_conocido = st.number_input(
-            "Valor de uno de los lados (en metros)",
-            min_value=1.0,
-            value=250.0,
-            key="surcos_lado",
-        )
-        lado_calculado = area_total / lado_conocido
-        st.info(
-            f"💡 El otro lado calculado es de: **{lado_calculado:.2f} metros**"
-        )
-
-        cual_es = st.selectbox(
-            "El valor que ingresaste arriba corresponde a:",
-            ["Ancho", "Largo"],
-            key="surcos_cual",
-        )
-        if cual_es == "Ancho":
-            area_ancho = lado_conocido
-            area_largo = lado_calculado
+    if tipo_entrada_t == "Área Total y uno de los lados":
+        area_total_t = st.number_input("Área total del terreno (m²)", min_value=1.0, value=22000.0, key="t_area")
+        lado_conocido_t = st.number_input("Valor de uno de los lados (en metros)", min_value=1.0, value=220.0, key="t_lado")
+        lado_calculado_t = area_total_t / lado_conocido_t
+        st.info(f"💡 El otro lado calculado es de: **{lado_calculado_t:.2f} metros**")
+        
+        cual_es_t = st.selectbox("El valor que ingresaste arriba corresponde a:", ["Ancho", "Largo"], key="t_cual")
+        if cual_es_t == "Ancho":
+            area_ancho_t = lado_conocido_t
+            area_largo_t = lado_calculado_t
         else:
-            area_largo = lado_conocido
-            area_ancho = lado_calculado
+            area_largo_t = lado_conocido_t
+            area_ancho_t = lado_calculado_t
     else:
-        area_largo = st.number_input(
-            "Largo del terreno (metros)",
-            min_value=1.0,
-            value=500.0,
-            key="surcos_largo",
-        )
-        area_ancho = st.number_input(
-            "Ancho del terreno (metros)",
-            min_value=1.0,
-            value=250.0,
-            key="surcos_ancho",
-        )
-        area_total = area_largo * area_ancho
+        area_largo_t = st.number_input("Largo del terreno (metros)", min_value=1.0, value=100.0, key="t_largo")
+        area_ancho_t = st.number_input("Ancho del terreno (metros)", min_value=1.0, value=220.0, key="t_ancho")
+        area_total_t = area_largo_t * area_ancho_t
 
     st.write("---")
-    st.subheader("Distancias y Datos Adicionales")
-    unidad_medida = st.radio(
-        "Unidad de medida para distancias",
-        ["Centímetros (cm)", "Metros (m)"],
-        key="surcos_unidad",
-    )
+    st.subheader("Distancias de Siembra")
+    d_surcos_t = st.number_input("Distancia entre surcos (D/S en cm)", min_value=1.0, value=96.0, key="t_ds")
+    d_plantas_t = st.number_input("Distancia entre plantas en el surco (D/P en cm)", min_value=1.0, value=40.0, key="t_dp")
 
-    d_surcos_input = st.number_input(
-        "Distancia entre surcos (D/S)",
-        min_value=0.1,
-        value=80.0,
-        key="surcos_ds",
-    )
-    d_plantas_input = st.number_input(
-        "Distancia entre plantas en el surco (D/P)",
-        min_value=0.1,
-        value=50.0,
-        key="surcos_dp",
-    )
+    # Conversión automática de cm a metros como indica la guía
+    ds_m = d_surcos_t / 100.0
+    dp_m = d_plantas_t / 100.0
 
-    peso_unidad_g = st.number_input(
-        "Peso por unidad cosechada (gramos) [Opcional para costos]",
-        min_value=0.0,
-        value=32.0,
-        key="surcos_peso",
-    )
-    costo_kg = st.number_input(
-        "Costo por kg de cosecha ($) [Opcional para costos]",
-        min_value=0.0,
-        value=120.0,
-        key="surcos_costo",
-    )
-
-    if unidad_medida == "Centímetros (cm)":
-        distancia_entre_surcos = d_surcos_input / 100.0
-        distancia_entre_plantas = d_plantas_input / 100.0
-    else:
-        distancia_entre_surcos = d_surcos_input
-        distancia_entre_plantas = d_plantas_input
-
-    if st.button(f"Calcular {nombre_cultivo}"):
-        surcos = area_ancho / distancia_entre_surcos
-        surcos_completos = math.floor(surcos)
-
-        plantas_surco = area_largo / distancia_entre_plantas
-        total_plantas = surcos_completos * plantas_surco
+    if st.button("Calcular Tomate"):
+        num_surcos = area_ancho_t / ds_m
+        surcos_completos = math.floor(num_surcos)
+        plantas_surco = area_largo_t / dp_m
+        plantas_totales = surcos_completos * plantas_surco
 
         st.success("¡Cálculo realizado con éxito!")
-        st.write(f"- **Área total:** {area_total:,.2f} m²")
-        st.write(
-            f"- **1. Número de surcos:** {area_ancho} ÷ {distancia_entre_surcos} = {surcos:.2f} $\\rightarrow$ **{surcos_completos} surcos completos**"
-        )
-        st.write(
-            f"- **2. Plantas por surco:** {area_largo} ÷ {distancia_entre_plantas} = **{int(plantas_surco)} plantas**"
-        )
-        st.write(
-            f"- **3. Plantas totales:** {surcos_completos} × {int(plantas_surco)} = **{int(total_plantas):,} plantas de {nombre_cultivo.lower()}**"
-        )
+        st.write(f"- **Área total:** {area_total_t:,.2f} m²")
+        st.write(f"- **1. N° de surcos:** {area_ancho_t} m ÷ {ds_m} m = {num_surcos:.2f} $\\rightarrow$ **{surcos_completos} surcos completos**")
+        st.write(f"- **2. Plantas por surco:** {area_largo_t} m ÷ {dp_m} m = **{int(plantas_surco)} plantas por surco**")
+        st.write(f"- **3. Plantas totales:** {surcos_completos} × {int(plantas_surco)} = **{int(plantas_totales):,} plantas de tomate**")
 
-        if peso_unidad_g > 0 and costo_kg > 0:
-            peso_kg_total_unidad = peso_unidad_g / 1000.0
-            total_kg = total_plantas * peso_kg_total_unidad
-            costo_total = total_kg * costo_kg
-            st.write(
-                f"- **4. Cantidad total (kg):** {int(total_plantas):,} × {peso_kg_total_unidad} kg = **{total_kg:,.3f} kg**"
-            )
-            st.markdown(
-                f"- **5. Costo total:** {total_kg:,.3f} kg × ${costo_kg:,.1f} = **${costo_total:,.2f}**"
-            )
-
-elif sistema == "Sistema Triangular":
-    st.header("🔺 Sistema de Siembra Triangular")
+elif ejercicio == "2. Densidad Poblacional (Papa)":
+    st.header("🥔 2. Densidad Poblacional (Papa)")
     
-    # Nombre personalizado para el sistema triangular
-    nombre_cultivo_tri = st.text_input(
-        "📝 Nombre del Cultivo (Ej: Palma de Coco, Plátano)", 
-        value="Plátano", 
-        key="tri_nombre"
+    tipo_entrada_p = st.radio(
+        "¿Cómo conoces las medidas de tu terreno?",
+        ["Largo y Ancho directo", "Área Total y uno de los lados"],
+        key="p_tipo"
     )
 
-    unidad_area = st.radio(
-        "¿En qué unidad deseas ingresar la superficie del terreno?",
-        ["Hectáreas (Has)", "Metros Cuadrados (m²)"],
-        key="tri_u_area",
-    )
-
-    if unidad_area == "Hectáreas (Has)":
-        superficie_input = st.number_input(
-            "Superficie en Hectáreas (Has)",
-            min_value=0.01,
-            value=28.7,
-            key="tri_has",
-        )
-        superficie_m2 = superficie_input * 10000.0
+    if tipo_entrada_p == "Área Total y uno de los lados":
+        area_total_p = st.number_input("Área total del terreno (m²)", min_value=1.0, value=125000.0, key="p_area")
+        lado_conocido_p = st.number_input("Valor de uno de los lados (en metros)", min_value=1.0, value=250.0, key="p_lado")
+        lado_calculado_p = area_total_p / lado_conocido_p
+        st.info(f"💡 El otro lado calculado es de: **{lado_calculado_p:.2f} metros**")
+        
+        cual_es_p = st.selectbox("El valor que ingresaste arriba corresponde a:", ["Ancho", "Largo"], key="p_cual")
+        if cual_es_p == "Ancho":
+            area_ancho_p = lado_conocido_p
+            area_largo_p = lado_calculado_p
+        else:
+            area_largo_p = lado_conocido_p
+            area_ancho_p = lado_calculado_p
     else:
-        superficie_m2 = st.number_input(
-            "Superficie en Metros Cuadrados (m²)",
-            min_value=1.0,
-            value=287000.0,
-            key="tri_m2",
-        )
+        area_largo_p = st.number_input("Largo del terreno (metros)", min_value=1.0, value=500.0, key="p_largo")
+        area_ancho_p = st.number_input("Ancho del terreno (metros)", min_value=1.0, value=250.0, key="p_ancho")
+        area_total_p = area_largo_p * area_ancho_p
 
-    distancia_tri = st.number_input(
-        "Distancia de siembra (d en metros)",
-        min_value=0.1,
-        value=2.5,
-        key="tri_d",
-    )
+    st.write("---")
+    st.subheader("Distancias y Costos")
+    d_surcos_p = st.number_input("Distancia entre surcos (D/S en metros)", min_value=0.01, value=0.80, key="p_ds")
+    d_plantas_p = st.number_input("Distancia entre plantas en el surco (D/P en metros)", min_value=0.01, value=0.50, key="p_dp")
+    peso_g = st.number_input("Peso por papa (gramos)", min_value=0.1, value=32.0, key="p_peso")
+    costo_kg = st.number_input("Costo por kg de papa ($)", min_value=0.1, value=120.0, key="p_costo")
 
-    if st.button(f"Calcular {nombre_cultivo_tri} Triangular"):
-        d_cuadrado = distancia_tri**2
-        plantas_totales = (superficie_m2 / d_cuadrado) * 1.154
+    if st.button("Calcular Papa"):
+        num_surcos_p = area_ancho_p / d_surcos_p
+        surcos_completos_p = math.floor(num_surcos_p)
+        plantas_surco_p = area_largo_p / d_plantas_p
+        total_papas = surcos_completos_p * plantas_surco_p
+        
+        kg_papa = (peso_g / 1000.0) * total_papas
+        costo_total = kg_papa * costo_kg
 
         st.success("¡Cálculo realizado con éxito!")
-        if unidad_area == "Hectáreas (Has)":
-            st.write(
-                f"- **Conversión de Área:** {superficie_input} Has × 10,000 = **{superficie_m2:,.0f} m²**"
-            )
-        st.write(f"- **Superficie total (S):** {superficie_m2:,.0f} m²")
-        st.write(
-            f"- **Cálculo ($d^2$):** ({distancia_tri})² = {d_cuadrado:.2f}"
-        )
-        st.write(
-            f"- **Fórmula Triangular (con constante 1.154):** ({superficie_m2:,.0f} ÷ {d_cuadrado}) × 1.154"
-        )
-        st.write(
-            f"- **Densidad Poblacional Total:** **{round(plantas_totales):,} plantas de {nombre_cultivo_tri.lower()}**"
-        )
+        st.write(f"- **Área total:** {area_total_p:,.2f} m²")
+        st.write(f"- **1. N° de surcos:** {area_ancho_p} m ÷ {d_surcos_p} m = {num_surcos_p:.2f} $\\rightarrow$ **{surcos_completos_p} surcos completos**")
+        st.write(f"- **2. Plantas por surco:** {area_largo_p} m ÷ {d_plantas_p} m = **{int(plantas_surco_p)} plantas por surco**")
+        st.write(f"- **3. Plantas totales:** {surcos_completos_p} × {int(plantas_surco_p)} = **{int(total_papas):,} plantas de papa**")
+        st.write(f"- **4. Cantidad de papa (kg):** {total_papas:,.0f} × 0,032 kg = **{kg_papa:,.3f} kg de papa**")
+        st.markdown(f"- **5. Costo total:** {kg_papa:,.3f} kg × ${costo_kg:,.1f} = **${costo_total:,.3f}**")
 
-elif sistema == "Sistema Quincunce (Asocio)":
-    st.header("🍊 Sistema Quincunce en Asocio")
+elif ejercicio == "3. Densidad Poblacional (Plátano - Triangular)":
+    st.header("🍌 3. Densidad Poblacional (Plátano - Triangular)")
     
-    # Nombres personalizados para ambos cultivos del asocio
-    cultivo_principal = st.text_input(
-        "📝 Cultivo Principal (Ej: Cacao, Lúcuma)",
-        value="Cacao",
-        key="quin_princ",
-    )
-    cultivo_relleno = st.text_input(
-        "📝 Cultivo de Relleno (Ej: Plátano, Aguacate)",
-        value="Plátano",
-        key="quin_rell",
-    )
+    area_has = st.number_input("Área del terreno (Hectáreas)", min_value=0.01, value=28.7, key="pl_has")
+    distancia_pl = st.number_input("Distancia de siembra (d en metros)", min_value=0.1, value=2.5, key="pl_d")
 
-    area_has = st.number_input(
-        "Área total del terreno (Hectáreas)",
-        min_value=0.1,
-        value=20.0,
-        key="quin_has",
-    )
-    distancia_q = st.number_input(
-        "Distancia de siembra (metros)", min_value=0.1, value=5.5, key="quin_dq"
-    )
-
-    if st.button("Calcular Quincunce en Asocio"):
-        col_calc = 100.0 / distancia_q
-        fil_calc = 100.0 / distancia_q
-
-        # Cultivo Principal
-        cols_princ = math.floor(col_calc)
-        filas_princ = math.floor(fil_calc)
-        plantas_princ_ha = cols_princ * filas_princ
-        total_princ = plantas_princ_ha * area_has
-
-        # Cultivo de Relleno (Quincunce - Relleno restando 1 en filas)
-        cols_relleno = cols_princ
-        filas_relleno = filas_princ - 1
-        plantas_relleno_ha = filas_relleno * filas_relleno
-        total_relleno = plantas_relleno_ha * area_has
-
-        total_general = total_princ + total_relleno
+    if st.button("Calcular Plátano Triangular"):
+        area_m2 = area_has * 10000.0
+        d_cuadrado = distancia_pl ** 2
+        plantas_totales = (area_m2 / d_cuadrado) * 1.154
 
         st.success("¡Cálculo realizado con éxito!")
+        st.write(f"- **Conversión de Área:** {area_has} Has × 10.000 = **{area_m2:,.0f} m²**")
+        st.write(f"- **Cálculo ($d^2$):** ({distancia_pl})² = {d_cuadrado:.2f}")
+        st.write(f"- **Fórmula:** ({area_m2:,.0f} ÷ {d_cuadrado}) × 1,154")
+        st.write(f"- **Densidad Poblacional Total:** **{round(plantas_totales):,} plantas de plátano**")
 
-        st.subheader(f"🌲 {cultivo_principal.upper()} (Cultivo Principal)")
-        st.write(
-            f"- **1. Columnas:** 100 m ÷ {distancia_q} m = **{cols_princ}**"
-        )
-        st.write(
-            f"- **2. Filas:** 100 m ÷ {distancia_q} m = **{filas_princ}**"
-        )
-        st.write(
-            f"- **3. Plantas / Ha:** {cols_princ} × {filas_princ} = **{plantas_princ_ha} plantas**"
-        )
-        st.write(
-            f"- **4. Plantas totales ({area_has} Has):** {plantas_princ_ha} × {area_has} = **{int(total_princ):,} plantas de {cultivo_principal.lower()}**"
-        )
+elif ejercicio == "4. Sistema Quincunce (Frutales)":
+    st.header("🍊 4. Sistema Quincunce (Frutales)")
+    
+    area_q_has = st.number_input("Área total del terreno (Hectáreas)", min_value=0.1, value=20.0, key="q_has")
+    distancia_q = st.number_input("Distancia de siembra (metros)", min_value=0.1, value=5.5, key="q_d")
 
-        st.subheader(f"🥑 {cultivo_relleno.upper()} (Cultivo en Quincunce)")
-        st.write(
-            f"- **1. Columnas:** 100 m ÷ {distancia_q} m = **{cols_relleno}**"
-        )
-        st.write(
-            f"- **2. Filas:** ({filas_princ} - 1) = **{filas_relleno}**"
-        )
-        st.write(
-            f"- **3. Plantas / Ha:** {filas_relleno} × {filas_relleno} = **{plantas_relleno_ha} plantas**"
-        )
-        st.write(
-            f"- **4. Plantas totales ({area_has} Has):** {plantas_relleno_ha} × {area_has} = **{int(total_relleno):,} plantas de {cultivo_relleno.lower()}**"
-        )
+    if st.button("Calcular Quincunce"):
+        col = 100.0 / distancia_q
+        fil = 100.0 / distancia_q
+        
+        # Lúcuma
+        col_l = math.floor(col)
+        fil_l = math.floor(fil)
+        lucuma_ha = col_l * fil_l
+        total_lucuma = lucuma_ha * area_q_has
+
+        # Aguacate
+        fil_a = fil_l - 1
+        aguacate_ha = fil_a * fil_a
+        total_aguacate = aguacate_ha * area_q_has
+
+        total_general = total_lucuma + total_aguacate
+
+        st.success("¡Cálculo realizado con éxito!")
+        st.subheader("🌲 LÚCUMA:")
+        st.write(f"- Columnas: 100 m ÷ {distancia_q} m = {col_l}")
+        st.write(f"- Filas: 100 m ÷ {distancia_q} m = {fil_l}")
+        st.write(f"- Plantas / Ha: {col_l} × {fil_l} = {lucuma_ha}")
+        st.write(f"- **Plantas totales:** {lucuma_ha} × {area_q_has} Has = **{int(total_lucuma):,} plantas**")
+
+        st.subheader("🥑 AGUACATE (QUINCUNCE):")
+        st.write(f"- Columnas: {col_l}")
+        st.write(f"- Filas: ({fil_l} - 1) = {fil_a}")
+        st.write(f"- Plantas / Ha: {fil_a} × {fil_a} = {aguacate_ha}")
+        st.write(f"- **Plantas totales:** {aguacate_ha} × {area_q_has} Has = **{int(total_aguacate):,} plantas**")
 
         st.write("---")
         st.markdown(f"### 📊 RESUMEN TOTAL GENERAL")
-        st.write(f"- **{cultivo_principal}:** {int(total_princ):,} plantas")
-        st.write(f"- **{cultivo_relleno}:** {int(total_relleno):,} plantas")
-        st.markdown(
-            f"### **TOTAL GENERAL = {int(total_general):,} plantas**"
-        )
+        st.write(f"- **Lúcuma:** {int(total_lucuma):,} plantas")
+        st.write(f"- **Aguacate:** {int(total_aguacate):,} plantas")
+        st.markdown(f"### **TOTAL GENERAL = {int(total_general):,} plantas**")
 
 st.write("---")
 st.caption("Desarrollado con Python y Streamlit por Angelo Gonzalo Piedrahita Leon 🚀")
